@@ -2,11 +2,7 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AluminumShark/langgraph-harness-workshop/blob/main/notebooks/langgraph-workshop.ipynb)
 
-> **給講師**:上面 Colab badge 的 GitHub 路徑目前是 `AluminumShark/langgraph-harness-workshop` 這個 placeholder——正式公開前請改成你們社團真正的 GitHub org / repo,否則 badge 會 404。`notebooks/langgraph-workshop.ipynb` 第三個 cell 下載 `sales.csv` 的 `DATA_URL` 同樣要改。
-
----
-
-兩小時的 LangGraph + harness engineering 工作坊教材,設計給「只會基礎 Python」的台大 AI 社新生。**不假設你寫過裝飾器、呼叫過 LLM API、看過 TypedDict**。
+兩小時的 LangGraph + harness engineering 工作坊教材,設計給「只會基礎 Python」的學員。**不假設你寫過裝飾器、呼叫過 LLM API、看過 TypedDict**。
 
 完成這份 notebook 之後,你會親手寫出一個會自己決定怎麼分析 CSV 的 agent,並且體會到為什麼業界從 prompt engineering 一路演進到 harness engineering——也就是「trace + eval + 迭代閉環」這套工程紀律。
 
@@ -58,19 +54,7 @@ uv run jupyter lab notebooks/langgraph-workshop.ipynb
 | 2:45–2:50 | Cheatsheet | 5 min | – |
 | 2:50–2:55 | 收場 | 5 min | – |
 
-含休息共 2 小時 55 分。如果嚴格 2 小時必須砍時段,看 [docs/instructor-notes.md](docs/instructor-notes.md) 的「砍時建議」段落。
-
-## 給講師
-
-開課前一定要看 [docs/instructor-notes.md](docs/instructor-notes.md):
-
-- 開場前 30 分鐘 checklist
-- **Productive failure 紀律**——前半場不講解 agent 行為不穩,留到 §10 舉手調查當伏筆
-- **§9 主動破除自我懷疑紀律**——這節不能省,前半場一結束就要明確告訴學員「跑出來不一樣不是你寫錯」
-- 各節點時程檢查
-- Colab 掛掉的 backup 計畫
-
-完整教學講稿放在 [docs/lecture.md](docs/lecture.md)。
+含休息共 2 小時 55 分。完整教學講稿放在 [docs/lecture.md](docs/lecture.md)。
 
 ## Development
 
@@ -94,7 +78,6 @@ CI runs all of the above on every push to `main` and every pull request — see 
 
 ## Acknowledgements
 
-- **NTU AI Club** — for the workshop slot and student feedback that drove the v5 calibration
 - **LangChain / LangGraph team** — for the framework and the LangGraph Academy
 - **Hamel Husain** — `Your AI Product Needs Evals` is the canonical reference for the eval section
 - The lecture's four-phase narrative (prompt → context → workflow → harness) draws on Anthropic's public engineering writing on agent harnesses
