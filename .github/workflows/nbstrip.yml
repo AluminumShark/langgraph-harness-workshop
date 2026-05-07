@@ -1,0 +1,26 @@
+name: Strip notebook outputs
+
+on:
+  pull_request:
+    paths:
+      - "notebooks/**/*.ipynb"
+
+jobs:
+  strip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+      - name: Set up Python
+        run: uv python install
+      - name: Install nbstripout
+        run: uv tool install nbstripout
+      - name: Verify notebooks have no outputs
+        run: |
+          uv tool run nbstripout --verify notebooks/**/*.ipynb || {
+            echo "::error::Notebooks contain outputs. Run 'nbstripout notebooks/**/*.ipynb' locally and commit."
+            exit 1
+          }
