@@ -6,7 +6,7 @@
 
 ## 開場前 30 分鐘 Checklist
 
-- [ ] **Colab notebook 連結測過**:自己從零跑一遍沒卡。注意 `notebooks/langgraph-workshop.ipynb` 第三個 cell 的 `DATA_URL` 要指向你們社團真正的 GitHub repo (預設是 `NTUAI-CLUB/langgraph-harness-workshop` placeholder,如果還沒換,sales.csv 會 404)
+- [ ] **Colab notebook 連結測過**:自己從零跑一遍沒卡。`notebooks/langgraph-workshop.ipynb` 第三個 cell 的 `DATA_URL` 預設指向 `AluminumShark/langgraph-harness-workshop` 的 raw GitHub URL——如果你 fork 到別的 org / repo,記得同步改
 - [ ] **預備一支 demo Anthropic API key** 給沒 key 的學員
 - [ ] **故意有缺陷的 sales.csv 已上傳公開連結** (commit 在 `data/sales.csv`,raw GitHub URL 即可)
 - [ ] **投影片開好** (前半場開場 + 後半場開場兩段用)

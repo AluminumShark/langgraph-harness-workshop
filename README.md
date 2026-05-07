@@ -1,8 +1,8 @@
 # LangGraph Harness Workshop · 兩小時打造你的第一個 Data Analyst Agent
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NTUAI-CLUB/langgraph-harness-workshop/blob/main/notebooks/langgraph-workshop.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AluminumShark/langgraph-harness-workshop/blob/main/notebooks/langgraph-workshop.ipynb)
 
-> **給講師**:上面 Colab badge 的 GitHub 路徑目前是 `NTUAI-CLUB/langgraph-harness-workshop` 這個 placeholder——正式公開前請改成你們社團真正的 GitHub org / repo,否則 badge 會 404。`notebooks/langgraph-workshop.ipynb` 第三個 cell 下載 `sales.csv` 的 `DATA_URL` 同樣要改。
+> **給講師**:上面 Colab badge 的 GitHub 路徑目前是 `AluminumShark/langgraph-harness-workshop` 這個 placeholder——正式公開前請改成你們社團真正的 GitHub org / repo,否則 badge 會 404。`notebooks/langgraph-workshop.ipynb` 第三個 cell 下載 `sales.csv` 的 `DATA_URL` 同樣要改。
 
 ---
 
@@ -25,7 +25,7 @@
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Clone 並安裝相依
-git clone https://github.com/NTUAI-CLUB/langgraph-harness-workshop.git
+git clone https://github.com/AluminumShark/langgraph-harness-workshop.git
 cd langgraph-harness-workshop
 uv sync
 
