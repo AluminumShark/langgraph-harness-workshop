@@ -1,11 +1,11 @@
 [project]
 name = "langgraph-harness-workshop"
 version = "0.1.0"
-description = "兩小時 LangGraph + harness engineering 工作坊教材 (NTU AI Club)"
+description = "兩小時 LangGraph + harness engineering 工作坊教材"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
-authors = [{ name = "NTU AI Club" }]
+authors = [{ name = "Wei Lee" }]
 dependencies = [
     "langgraph>=1.1",
     "langchain>=0.3",
