@@ -63,22 +63,32 @@ AGENT: 平均 revenue 最低的 region 是 South,平均 ~XXX。已扣除 region/
     cells.append(md("先確保套件齊全(Colab 第一次跑要等一下)。"))
     cells.append(code("%pip install -q -U langgraph langchain langchain-google-genai pandas"))
 
-    cells.append(md("把剛才拿到的 API key 貼進來。"))
+    cells.append(
+        md(
+            "把剛才拿到的 API key **整段**貼到下面引號裡(連 placeholder 一起取代,"
+            "不要前後留中文)。Google API key 長 39 字、以 `AIza` 開頭。"
+        )
+    )
     cells.append(
         code("""import os
 
-# 把下面這行的字串換成你自己的 key(工作坊圖快才這樣寫,正式專案不要這樣做)
-os.environ["GOOGLE_API_KEY"] = "在這裡貼上你的 API key"
+# 工作坊圖快才這樣寫,正式專案不要這樣做
+GOOGLE_API_KEY = "PASTE_YOUR_KEY_HERE"
 
-assert os.environ["GOOGLE_API_KEY"] != "在這裡貼上你的 API key", "請先把 key 貼進來"
-print("API key 長度:", len(os.environ["GOOGLE_API_KEY"]))
+# 安全檢查:沒貼 / 貼錯 / 不小心連中文一起貼,在這邊就擋掉
+assert GOOGLE_API_KEY != "PASTE_YOUR_KEY_HERE", "請先把 key 貼進來"
+assert GOOGLE_API_KEY.isascii(), "key 裡有非 ASCII 字元,你大概不小心把中文 placeholder 留下來了"
+assert GOOGLE_API_KEY.startswith("AIza"), "Google API key 應該以 AIza 開頭,確認一下你貼對了"
+
+os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
+print("API key 長度:", len(GOOGLE_API_KEY))
 """)
     )
 
     cells.append(
         code("""from langchain_google_genai import ChatGoogleGenerativeAI
 
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0)
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
 result = llm.invoke("用一句話說明你是誰")
 print(result.content)
 """)
@@ -274,6 +284,25 @@ print("response_metadata keys:", list(resp.response_metadata.keys()))
 """)
     )
 
+    cells.append(
+        md("""注意 `resp.content` 在新版 Gemini(2.5+ 帶 reasoning)會回 **list of dict**,
+裡面有 `type='text'` 跟 thought signature。要拿純文字字串,改用 `.text` property:
+""")
+    )
+    cells.append(
+        code("""# .content 是 raw,可能是 str 也可能是 list of dict
+print("raw content:", repr(resp.content)[:200], "...")
+
+# .text 是統一的純字串訪存
+print("text:", resp.text)
+""")
+    )
+
+    cells.append(
+        md("""**經驗法則:展示給人看用 `.text`,做訊息序列化或要看完整結構用 `.content`。**
+""")
+    )
+
     cells.append(md("### §6.3 多輪對話:messages 是 list,LLM 沒記憶"))
     cells.append(
         code("""from langchain_core.messages import AIMessage, HumanMessage
@@ -284,13 +313,13 @@ history = [
     AIMessage(content="你好 Alice!"),
     HumanMessage(content="我叫什麼?"),
 ]
-print(llm.invoke(history).content)
+print(llm.invoke(history).text)
 """)
     )
 
     cells.append(
         code("""# 反例:不傳 history,只傳最後一句
-print(llm.invoke("我叫什麼?").content)
+print(llm.invoke("我叫什麼?").text)
 """)
     )
 
@@ -441,26 +470,50 @@ print([t.name for t in tools])
 """)
     )
 
-    cells.append(md("先測試 tool 自己跑得起來。"))
     cells.append(
-        code("""# 注意 path:Colab 會把 repo clone 進當前目錄,本地請確保有 data/sales.csv
+        md(
+            "準備 demo 資料:`data/sales.csv` 不存在就現場生一份。"
+            "故意混了 5 個 region NaN + 5 個 revenue NaN,讓 inspect_data 看得到。"
+        )
+    )
+    cells.append(
+        code("""import os
+import random
+from datetime import date, timedelta
+
 CSV_PATH = "data/sales.csv"
-print(inspect_data.invoke({"path": CSV_PATH}))
+
+if not os.path.exists(CSV_PATH):
+    os.makedirs(os.path.dirname(CSV_PATH), exist_ok=True)
+    rng = random.Random(42)
+    regions = ["East", "West", "North", "South"]
+    products = ["Widget", "Gadget", "Gizmo", "Doohickey"]
+    base = date(2025, 1, 1)
+    rows = []
+    for _ in range(100):
+        region = rng.choice(regions)
+        unit_price = rng.uniform(8, 18) if region == "South" else rng.uniform(20, 60)
+        units = rng.randint(1, 50)
+        rows.append({
+            "date": (base + timedelta(days=rng.randint(0, 89))).isoformat(),
+            "region": region,
+            "product": rng.choice(products),
+            "units": units,
+            "revenue": round(units * unit_price, 2),
+        })
+    df = pd.DataFrame(rows)
+    df.loc[rng.sample(range(100), 5), "region"] = pd.NA
+    df.loc[rng.sample(range(100), 5), "revenue"] = pd.NA
+    df.to_csv(CSV_PATH, index=False)
+    print(f"已生成 {CSV_PATH}({len(df)} 筆)")
+else:
+    print(f"{CSV_PATH} 已存在")
 """)
     )
 
-    cells.append(md("如果 Colab 找不到 csv,跑這個 cell 把資料抓下來。"))
+    cells.append(md("先測試 tool 自己跑得起來。"))
     cells.append(
-        code("""import os
-import urllib.request
-
-if not os.path.exists("data/sales.csv"):
-    os.makedirs("data", exist_ok=True)
-    url = "https://raw.githubusercontent.com/AluminumShark/langgraph-harness-workshop/main/data/sales.csv"
-    urllib.request.urlretrieve(url, "data/sales.csv")
-    print("已下載 data/sales.csv")
-else:
-    print("data/sales.csv 已存在")
+        code("""print(inspect_data.invoke({"path": CSV_PATH}))
 """)
     )
 
@@ -496,7 +549,8 @@ print("agent compiled.")
 for i in range(3):
     print(f"========== 第 {i + 1} 次 ==========")
     result = agent.invoke({"messages": [{"role": "user", "content": question}]})
-    print(result["messages"][-1].content)
+    # 用 .text 拿純字串(原因見 §6.2)
+    print(result["messages"][-1].text)
     print()
 """)
     )
@@ -517,7 +571,8 @@ for i, m in enumerate(result["messages"]):
         for call in tc:
             print(f"  tool_call -> {call['name']}({call['args']})")
     else:
-        text = str(m.content)
+        # .text 統一從 str / list-of-dict 兩種 content 形狀拿出純字串
+        text = m.text if hasattr(m, "text") else str(m.content)
         if len(text) > 300:
             text = text[:300] + "..."
         print(f"  {text}")
@@ -606,7 +661,7 @@ Harness = 把 agent 當「黑盒受測物」,在外面套一層工具,讓你能:
                     for call in tool_calls:
                         print(f"  [{role}] tool_call -> {call['name']}({call['args']})")
                 else:
-                    text = str(msg.content)
+                    text = msg.text if hasattr(msg, "text") else str(msg.content)
                     if len(text) > 400:
                         text = text[:400] + "..."
                     print(f"  [{role}] {text}")
@@ -683,7 +738,7 @@ def extract_final_text(events):
                 continue
             for msg in state.get("messages", []) or []:
                 if not getattr(msg, "tool_calls", None):
-                    final = str(getattr(msg, "content", "") or "")
+                    final = msg.text if hasattr(msg, "text") else str(getattr(msg, "content", "") or "")
     return final
 """)
     )
@@ -812,7 +867,7 @@ v2_results = run_eval_suite(agent_v2, EVAL_CASES)
 
 1. **加新 case**:讓 baseline 通過,但 v2 反而失敗——觀察 prompt over-fit
 2. **第三個 tool**:加 `plot_data(path, code)` 產 base64 PNG,並寫 case 驗證它沒被誤用
-3. **跨模型比較**:把 `gemini-2.0-flash` 換成 `gemini-2.5-pro`,跑同一份 EVAL_CASES,看分數差距
+3. **跨模型比較**:把 `gemini-2.5-flash` 換成 `gemini-2.5-pro`,跑同一份 EVAL_CASES,看分數差距
 4. **改 trace**:把 latency / token usage 加進 pretty_trace,你就能看到每個 case 的 cost
 5. **CI 化**:把 EVAL_CASES 寫進 pytest,在 GitHub Actions 跑 nightly
 

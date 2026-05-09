@@ -28,7 +28,7 @@ def build_graph(system_prompt: str | None = None):
         compiled graph
     """
     tools = [inspect_data, run_pandas]
-    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0)
+    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
     llm_with_tools = llm.bind_tools(tools)
 
     def chatbot(state: MessagesState) -> dict:
