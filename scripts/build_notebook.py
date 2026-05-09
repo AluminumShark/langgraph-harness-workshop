@@ -54,26 +54,23 @@ AGENT: 平均 revenue 最低的 region 是 South,平均 ~XXX。已扣除 region/
 ### 拿 Google AI API key
 
 1. 到 https://aistudio.google.com/apikey 拿一把免費的 Gemini API key
-2. **如果在 Colab**:左側鑰匙圖示 → Add new secret → 名稱 `GOOGLE_API_KEY` → 把 **Notebook access** 開關打開
-3. **如果在本地**:`export GOOGLE_API_KEY="..."`(Windows PowerShell:`$env:GOOGLE_API_KEY="..."`)
+2. 複製 key,貼到下面那個 cell 的引號裡
+
+> ⚠️ **這只是工作坊圖快**。實際開發請改用環境變數或 Colab secret,**不要把 API key commit 進 repo**。
 """)
     )
 
     cells.append(md("先確保套件齊全(Colab 第一次跑要等一下)。"))
     cells.append(code("%pip install -q -U langgraph langchain langchain-google-genai pandas"))
 
-    cells.append(md("讀進 API key,試打一句確認接通。"))
+    cells.append(md("把剛才拿到的 API key 貼進來。"))
     cells.append(
         code("""import os
 
-# Colab 從 userdata 讀,本地從環境變數讀
-try:
-    from google.colab import userdata
-    os.environ["GOOGLE_API_KEY"] = userdata.get("GOOGLE_API_KEY")
-except Exception:
-    pass
+# 把下面這行的字串換成你自己的 key(工作坊圖快才這樣寫,正式專案不要這樣做)
+os.environ["GOOGLE_API_KEY"] = "在這裡貼上你的 API key"
 
-assert os.environ.get("GOOGLE_API_KEY"), "沒讀到 GOOGLE_API_KEY,回去 §1 把 secret 設好"
+assert os.environ["GOOGLE_API_KEY"] != "在這裡貼上你的 API key", "請先把 key 貼進來"
 print("API key 長度:", len(os.environ["GOOGLE_API_KEY"]))
 """)
     )
