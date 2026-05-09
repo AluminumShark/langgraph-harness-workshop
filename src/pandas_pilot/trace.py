@@ -37,7 +37,6 @@ def pretty_trace(graph, user_message: str, *, config: dict[str, Any] | None = No
 
 def _print_message(msg) -> None:
     role = type(msg).__name__
-    content = getattr(msg, "content", "")
     tool_calls = getattr(msg, "tool_calls", None)
 
     if tool_calls:
@@ -45,10 +44,9 @@ def _print_message(msg) -> None:
             name = call.get("name") if isinstance(call, dict) else getattr(call, "name", "?")
             args = call.get("args") if isinstance(call, dict) else getattr(call, "args", {})
             print(f"  [{role}] tool_call -> {name}({args})")
-        if content:
-            print(f"  [{role}] (also content) {content}")
     else:
-        text = str(content)
+        # 用 .text 統一從 str / list-of-dict content 拿純字串
+        text = msg.text if hasattr(msg, "text") else str(getattr(msg, "content", ""))
         if len(text) > 400:
             text = text[:400] + "..."
         print(f"  [{role}] {text}")

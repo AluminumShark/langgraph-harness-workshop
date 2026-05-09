@@ -67,7 +67,8 @@ def extract_final_text(events: list[dict]) -> str:
             for msg in state.get("messages", []) or []:
                 tool_calls = getattr(msg, "tool_calls", None)
                 if not tool_calls:
-                    final = str(getattr(msg, "content", "") or "")
+                    # 用 .text 統一處理 gemini-2.5+ 的 list-of-dict content
+                    final = msg.text if hasattr(msg, "text") else str(getattr(msg, "content", "") or "")
     return final
 
 
