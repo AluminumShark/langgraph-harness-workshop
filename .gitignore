@@ -41,3 +41,4 @@ htmlcov/
 .env.local
 
 # uv:lock file 要 commit,故不 ignore uv.lock
+.tmp/
