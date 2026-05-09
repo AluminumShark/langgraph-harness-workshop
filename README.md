@@ -1,83 +1,112 @@
-# LangGraph Harness Workshop · 兩小時打造你的第一個 Data Analyst Agent
+# pandas-pilot
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AluminumShark/langgraph-harness-workshop/blob/main/notebooks/langgraph-workshop.ipynb)
+> LangGraph 工作坊配套:寫出你的第一個 Data Analyst Agent
 
-兩小時的 LangGraph + harness engineering 工作坊教材,設計給「只會基礎 Python」的學員。**不假設你寫過裝飾器、呼叫過 LLM API、看過 TypedDict**。
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AluminumShark/langgraph-harness-workshop/blob/main/notebooks/workshop.ipynb)
 
-完成這份 notebook 之後,你會親手寫出一個會自己決定怎麼分析 CSV 的 agent,並且體會到為什麼業界從 prompt engineering 一路演進到 harness engineering——也就是「trace + eval + 迭代閉環」這套工程紀律。
+點上面的 badge 直接在 Colab 開 notebook,不需要本地安裝。
 
-## 怎麼開始 (Colab,推薦)
+## 這是什麼
 
-1. 點上面那顆 **Open In Colab** badge
-2. 在 Colab 左側「鑰匙」圖示新增 secret,名稱 `ANTHROPIC_API_KEY`,值是你的 Anthropic API key
-3. 從第一個 cell 開始 run,沒有 key 會跳出輸入框讓你貼
+LangGraph 工作坊的學員配套程式碼。一個 90 分鐘的工作坊,從零打造一個會分析 CSV 的 ReAct agent,並親手體驗 agent 的 stochastic 本性、學會用 trace + eval 把它當工程系統管。
 
-整本 notebook 已經把 helper functions 預先寫好,你只要看怎麼用、不用看怎麼實作。
+工作坊重點:
 
-## 怎麼開始 (本地 Jupyter)
+- 跟著講師現場跑 notebook,**看講師打開回傳物件**——這比看 slide 還重要
+- 故意讓學員體驗「同樣的問題、同樣的程式,Agent 回三種答案」這個現實
+- 教 trace 與 eval 這兩個讓 agent 變成可工程化系統的關鍵紀律
+
+## Colab 玩法(學員)
+
+1. 點上面的 **Open In Colab** badge
+2. 右上角 **「Copy to Drive」** 存一份到自己的 Drive
+3. 到 https://aistudio.google.com/apikey 拿一把免費的 Gemini API key
+4. Colab 左側鑰匙圖示 → **Add new secret**:
+   - 名稱:`GOOGLE_API_KEY`
+   - 值:剛才拿到的 key
+   - 打開 **「Notebook access」** 開關 ← 常見漏點,沒打開會讀不到
+5. 跑第一個 cell 確認接通
+6. 跟著講師往下跑
+
+## 本地開發(進階)
+
+如果你想 fork 修改、或在本地跑而不是 Colab:
 
 ```bash
-# 安裝 uv (如果還沒裝)
+# 1. 裝 uv (如果還沒裝)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Clone 並安裝相依
+# 2. clone
 git clone https://github.com/AluminumShark/langgraph-harness-workshop.git
 cd langgraph-harness-workshop
+
+# 3. 裝相依
 uv sync
 
-# 開 notebook
-uv run jupyter lab notebooks/langgraph-workshop.ipynb
+# 4. 設定 API key
+export GOOGLE_API_KEY="你的 key"
+
+# 5. 跑 notebook
+uv run jupyter notebook notebooks/workshop.ipynb
+
+# 或跑測試
+uv run pytest
+
+# Lint / format
+uv run ruff check .
+uv run ruff format .
+
+# Type check(ty 仍在 preview)
+uv run ty check src/
 ```
 
-第一個 cell 會自動偵測你不在 Colab,改用 `getpass` 提示你輸入 API key——不用先設環境變數。
+## 目錄結構
 
-## 工作坊時程
-
-| 時段 | 主題 | 時長 | 動手 vs 看 demo |
-|------|------|------|---------------|
-| 0:00–0:05 | 開場 demo | 5 min | 看 |
-| 0:05–0:15 | 環境救火 | 10 min | **動手** |
-| 0:15–0:20 | LangGraph 心智模型 | 5 min | 看 |
-| 0:20–0:25 | Python 速補 (TypedDict / Annotated) | 5 min | 看 |
-| 0:25–0:40 | echo bot:State / Node / compile | 15 min | 後 5 min **動手** |
-| 0:40–0:50 | 兩節點 + Edge | 10 min | 看 |
-| 0:50–1:00 | LLM 物件解剖 | 10 min | 看 + print |
-| 1:00–1:10 | MessagesState (含 reducer 反例 demo) | 10 min | 看 |
-| 1:10–1:35 | Tool Calling | 25 min | 後 10 min **動手** |
-| 1:35–1:40 | 前半場小結 + 主動破除自我懷疑 | 5 min | 講 |
-| 1:40–1:45 | 休息 | 5 min | – |
-| 1:45–1:50 | 四階段演進敘事 + 舉手調查 | 5 min | 看 |
-| 1:50–2:10 | Trace | 20 min | 後 5 min **動手** |
-| 2:10–2:35 | Eval (本工作坊最重要) | 25 min | 後 10 min **動手** |
-| 2:35–2:40 | Harness loop 整合 | 5 min | 看 |
-| 2:40–2:45 | 框架比較 | 5 min | 看 |
-| 2:45–2:50 | Cheatsheet | 5 min | – |
-| 2:50–2:55 | 收場 | 5 min | – |
-
-含休息共 2 小時 55 分。完整教學講稿放在 [docs/lecture.md](docs/lecture.md)。
-
-## Development
-
-This repo is a normal modern Python project — uv-managed, with ruff + ty + pytest + nbqa. To work on it:
-
-```bash
-uv sync                               # install all deps
-uv run ruff check .                   # lint
-uv run ruff format .                  # format
-uv run ty check                       # type check
-uv run nbqa ruff notebooks/           # lint notebooks
-uv run pytest                         # run tests
-uv run python scripts/generate_sales_csv.py  # regenerate data/sales.csv
+```
+pandas-pilot/
+├── README.md
+├── pyproject.toml
+├── .gitignore
+├── .python-version
+├── notebooks/
+│   └── workshop.ipynb       # 學員主要操作的檔案(§0-§14)
+├── data/
+│   └── sales.csv            # demo 資料(100 筆,含少量 NaN)
+├── scripts/
+│   └── generate_sales_csv.py  # 重新產生 sales.csv 的 script
+├── src/
+│   └── pandas_pilot/
+│       ├── __init__.py
+│       ├── tools.py         # @tool 定義(inspect_data、run_pandas)
+│       ├── graph.py         # build_graph()
+│       ├── trace.py         # pretty_trace()
+│       └── eval.py          # EVAL_CASES、evaluate_one、run_eval_suite
+└── tests/
+    └── test_smoke.py        # smoke test
 ```
 
-CI runs all of the above on every push to `main` and every pull request — see [.github/workflows/ci.yml](.github/workflows/ci.yml).
+## 工作坊涵蓋範圍
+
+- §0 開場
+- §1 環境救火(API key、套件安裝)
+- §2 LangGraph 心智模型(Node / Edge / State)
+- §3 Python 速補(type hint / TypedDict / Annotated / `@tool`)
+- §4 第一個 graph: echo bot
+- §5 兩節點 + 邊
+- §6 LLM 物件解剖
+- §7 MessagesState
+- §8 Tool Calling(前半場核心)
+- §9 前半場小結
+- §10 後半場開場(harness 概念)
+- §11 Trace
+- §12 Eval(baseline → 加 system prompt 重跑)
+- §13 Harness Loop 概念
+- §14 收場 + 課後練習提示
+
+## 安全告誡
+
+`run_pandas` 用 `eval()` 跑 LLM 生出的 code——這在 production 是嚴重漏洞。實務上請用 sandbox / RestrictedPython / e2b。本專案是教學用,故意簡化以便講解。
 
 ## License
 
-[MIT](LICENSE).
-
-## Acknowledgements
-
-- **LangChain / LangGraph team** — for the framework and the LangGraph Academy
-- **Hamel Husain** — `Your AI Product Needs Evals` is the canonical reference for the eval section
-- The lecture's four-phase narrative (prompt → context → workflow → harness) draws on Anthropic's public engineering writing on agent harnesses
+MIT

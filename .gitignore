@@ -1,15 +1,43 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual env
+.venv/
+venv/
+env/
+
+# Build artefacts
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Test / coverage
 .pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Tooling caches
 .ruff_cache/
 .ty_cache/
+.mypy_cache/
+
+# Jupyter
 .ipynb_checkpoints/
-*.egg-info/
-dist/
-build/
-.coverage
-.env
-.DS_Store
+
+# IDE
 .idea/
 .vscode/
+*.swp
+.DS_Store
+
+# Env vars
+.env
+.env.local
+
+# uv:lock file 要 commit,故不 ignore uv.lock
