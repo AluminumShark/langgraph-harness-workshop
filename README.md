@@ -1,4 +1,4 @@
-# pandas-pilot
+# langgraph-harness-workshop
 
 > LangGraph 工作坊配套:寫出你的第一個 Data Analyst Agent
 
